@@ -11,8 +11,8 @@
 /* SDL Graphics stuff */
 /**********************/
 #include <SDL2/SDL.h>
-#define WINDOW_WIDTH (480*3)
-#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH (320)
+#define WINDOW_HEIGHT 240
 
 /********************/
 /* ALSA Sound Stuff */
@@ -20,9 +20,32 @@
 #include <alsa/asoundlib.h>
 
 #define AUDIO_DEVICE "default"
-#define AUDIO_SAMPLE_RATE 48000
+#define AUDIO_SAMPLE_RATE 44100
 #define AUDIO_CHANNELS 2
-#define AUDIO_BUFFER_LENGTH (AUDIO_SAMPLE_RATE / 30)
+#define AUDIO_BUFFER_LENGTH (AUDIO_SAMPLE_RATE /50) //20ms
+
+int frame = 0;
+int fps;
+
+float x1zoom = 1.0;
+float x2zoom = 1.0;
+float y1zoom = 1.0;
+float y2zoom = 1.0;
+
+Uint32 start = 1;
+Uint32 end = 1;
+
+void get_fps()
+{
+	frame++;
+	if (frame % 100 == 0)
+	{
+		frame = 0;
+		end = start;
+		start = SDL_GetTicks();
+		fps = 100000.0 / (start - end);
+	}
+}
 
 /***************/
 /* Scope Stuff */
@@ -75,6 +98,21 @@ int main(int argc, char **argv) {
                 case SDL_QUIT:
                     quit = SDL_TRUE;
                     break;
+                case SDL_KEYDOWN:
+                    if (event.key.keysym.sym == SDLK_d) {
+                        x1zoom *= 1.1; // Expand view
+                        x2zoom *= 1.1; // Expand view
+                    } else if (event.key.keysym.sym == SDLK_g) {
+                        x1zoom /= 1.1; // Compress view
+                        x2zoom /= 1.1; // Compress view
+                    } else if (event.key.keysym.sym == SDLK_r) {
+                        y1zoom *= 1.1; // Expand y-axis
+                        y2zoom *= 1.1; // Expand y-axis
+                    } else if (event.key.keysym.sym == SDLK_v) {
+                        y1zoom /= 1.1; // Compress y-axis
+                        y2zoom /= 1.1; // Compress y-axis
+                    }
+                    break;
             }
         }
 
@@ -95,13 +133,13 @@ int main(int argc, char **argv) {
         SDL_RenderDrawLine(renderer, WINDOW_WIDTH / 2, 0, WINDOW_WIDTH / 2, WINDOW_HEIGHT);
 
         for(i = 1; i < AUDIO_BUFFER_LENGTH; i++) {
-            int x1 = (int)((i - 1) * spp);
-            int x2 = (int)(i * spp);
+            int x1 = (int)((i - 1) * spp * x1zoom);
+            int x2 = (int)(i * spp * x2zoom);
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-            SDL_RenderDrawLine(renderer, x1, halfY - (quarterY * audio_buffer[(i - 1) * 2]), x2, halfY - (quarterY * audio_buffer[i * 2]));
+            SDL_RenderDrawLine(renderer, x1, halfY - (quarterY * audio_buffer[(i - 1) * 2] * y1zoom), x2, halfY - (quarterY * audio_buffer[i * 2] * y1zoom));
 
             SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-            SDL_RenderDrawLine(renderer, x1, halfY - (quarterY * audio_buffer[((i - 1) * 2) + 1]), x2, halfY - (quarterY * audio_buffer[(i * 2) + 1]));
+            SDL_RenderDrawLine(renderer, x1, halfY - (quarterY * audio_buffer[((i - 1) * 2) + 1] * y2zoom), x2, halfY - (quarterY * audio_buffer[(i * 2) + 1] * y2zoom));
         }
 
         SDL_RenderPresent(renderer);
