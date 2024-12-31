@@ -22,7 +22,7 @@
 #define AUDIO_DEVICE "default"
 #define AUDIO_SAMPLE_RATE 44100
 #define AUDIO_CHANNELS 2
-#define AUDIO_BUFFER_LENGTH (AUDIO_SAMPLE_RATE /50) //20ms
+#define AUDIO_BUFFER_LENGTH (AUDIO_SAMPLE_RATE / 75) //75 for less latency.
 
 int frame = 0;
 int fps;
