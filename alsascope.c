@@ -99,16 +99,16 @@ int main(int argc, char **argv) {
                     quit = SDL_TRUE;
                     break;
                 case SDL_KEYDOWN:
-                    if (event.key.keysym.sym == SDLK_d) {
+                    if (event.key.keysym.sym == SDLK_LEFT) {
                         x1zoom *= 1.1; // Expand view
                         x2zoom *= 1.1; // Expand view
-                    } else if (event.key.keysym.sym == SDLK_g) {
+                    } else if (event.key.keysym.sym == SDLK_RIGHT) {
                         x1zoom /= 1.1; // Compress view
                         x2zoom /= 1.1; // Compress view
-                    } else if (event.key.keysym.sym == SDLK_r) {
+                    } else if (event.key.keysym.sym == SDLK_UP) {
                         y1zoom *= 1.1; // Expand y-axis
                         y2zoom *= 1.1; // Expand y-axis
-                    } else if (event.key.keysym.sym == SDLK_v) {
+                    } else if (event.key.keysym.sym == SDLK_DOWN) {
                         y1zoom /= 1.1; // Compress y-axis
                         y2zoom /= 1.1; // Compress y-axis
                     }
