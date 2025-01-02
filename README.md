@@ -11,3 +11,8 @@ USAGE:
 up and down keys to zoom y axiz.
 
 left and right keys to zoom x axis.
+
+
+Latest version updates:
+
+Keyboard arrow key control of amplitude and time base.
